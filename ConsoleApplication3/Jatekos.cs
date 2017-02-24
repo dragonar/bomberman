@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 
 namespace ConsoleApplication3
 {
-    struct Jatekos
+    class Jatekos
     {
         public uint ID;
         public String Nev;

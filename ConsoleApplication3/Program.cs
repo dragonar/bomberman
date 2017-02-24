@@ -117,7 +117,7 @@ namespace ConsoleApplication3
                         Jatekos jj = Jatekosok.Values.ElementAt(i);
                         jj.x = x;
                         jj.y = y;
-                        Jatekosok[jj.ID] = jj;
+                       // Jatekosok[jj.ID] = jj;
                         Palya[x, y].Tipus = CellaTipus.Ures;
                         Palya[x + 1, y].Tipus = CellaTipus.Ures;
                         Palya[x, y + 1].Tipus = CellaTipus.Ures;
