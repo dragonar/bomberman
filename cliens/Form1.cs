@@ -33,11 +33,11 @@ namespace cliens
             t.Start();
         }
 
-        private void Log(string Massage)
+        private void Log(string Message)
         {
             listBox1.Invoke((MethodInvoker)(() =>
              {
-                 listBox1.Items.Add(Massage);
+                 listBox1.Items.Add(Message);
                  listBox1.SelectedIndex = listBox1.Items.Count - 1;
              }));
 
