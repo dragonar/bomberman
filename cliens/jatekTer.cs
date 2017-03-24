@@ -36,7 +36,7 @@ namespace cliens
 
        public Dictionary<uint, Jatekos> JatekosLista = new Dictionary<uint, Jatekos>();
 
-        public void palya_init(uint szelesseg, uint magassag)
+       /* public void palya_init(uint szelesseg, uint magassag)
         {
             palya_szelesseg = szelesseg;
             palya_magassag = magassag;
@@ -52,7 +52,7 @@ namespace cliens
              Palya[1, 4] = CellaTipus.Lang_Kartya;
              Palya[2, 4] = CellaTipus.Sebesseg_Kartya;
              Palya[6, 5] = CellaTipus.Kesztyu_Kartya;
-             Palya[3, 4] = CellaTipus.Halalfej_Kartya;*/
+             Palya[3, 4] = CellaTipus.Halalfej_Kartya;
 
             JatekosLista[1] = new Jatekos()
             {
@@ -62,7 +62,7 @@ namespace cliens
                 x = 1,
                 y = 1
             };
-        }
+        }*/
 
         public void Palyakep(uint Szelesseg,uint Magassag,byte[] Adatok)
         {
@@ -91,8 +91,8 @@ namespace cliens
             try
             {
 
-                uint cell_width = ((uint)buffer.Width - 150) / palya_szelesseg;
-                uint cell_height = ((uint)buffer.Height - 150) / palya_magassag;
+                uint cell_width = ((uint)buffer.Width - 10) / palya_szelesseg;
+                uint cell_height = ((uint)buffer.Height - 10) / palya_magassag;
                 cell_size = (cell_width < cell_height) ? (cell_width) : (cell_height);
 
                 offset_x = ((uint)buffer.Width - cell_size * palya_szelesseg) / 2;
@@ -138,6 +138,57 @@ namespace cliens
 
                                     break;
                                 }
+
+                            case CellaTipus.Bomba_Kartya:
+                                {
+                                    bufferg.FillRectangle(Brushes.Cyan,
+                                      CellaX2PixelX(j),
+                                      CellaY2PixelY(i),
+                                      cell_size,
+                                      cell_size);
+
+                                    string ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x1F4A3));
+
+                                    Font f = new Font("Segoe UI Symbol", cell_size * 0.6f, FontStyle.Bold);
+
+                                    SizeF s = bufferg.MeasureString(ss, f);
+                                    int sox = ((int)cell_size - (int)s.Width) / 2;
+                                    int soy = ((int)cell_size - (int)s.Height) / 2;
+
+                                    bufferg.DrawString(ss,
+                                        f,
+                                        Brushes.Black,
+                                       CellaX2PixelX(j) + sox,
+                                       CellaY2PixelY(i) + soy);
+
+                                    break;
+                                }
+                            case CellaTipus.Lang_Kartya:
+                                {
+                                    bufferg.FillRectangle(Brushes.Cyan,
+                                      CellaX2PixelX(j),
+                                      CellaY2PixelY(i),
+                                      cell_size,
+                                      cell_size);
+
+                                    string ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x1f525));
+
+                                    Font f = new Font("Segoe UI Symbol", cell_size * 0.6f, FontStyle.Bold);
+
+                                    SizeF s = bufferg.MeasureString(ss, f);
+                                    int sox = ((int)cell_size - (int)s.Width) / 2;
+                                    int soy = ((int)cell_size - (int)s.Height) / 2;
+
+                                    bufferg.DrawString(ss,
+                                        f,
+                                        Brushes.Black,
+                                       CellaX2PixelX(j) + sox,
+                                       CellaY2PixelY(i) + soy);
+
+                                    break;
+                                }
+
+
                             case CellaTipus.Lab_Kartya:
                                 {
 
@@ -179,31 +230,7 @@ namespace cliens
                                        CellaY2PixelY(i) + soy);
                                     break;
                                 }
-                            /*      case CellaTipus.Bomba_Kartya:
-                                      {
-                                          bufferg.FillRectangle(Brushes.Cyan,
-                                        CellaX2PixelX(j),
-                                        CellaY2PixelY(j),
-                                             cell_size,
-                                            cell_size);
-
-                                          Font f = new Font("wingdings", cell_size * 0.6f, FontStyle.Bold);
-
-                                          SizeF s = bufferg.MeasureString("M", f);
-                                          int sox = ((int)cell_size - (int)s.Width) / 2;
-                                          int soy = ((int)cell_size - (int)s.Height) / 2;
-
-                                          bufferg.DrawString("M",
-                                              f,
-                                              new SolidBrush(Color.FromArgb(0xff, 0x00, 0xff)),
-
-                                             CellaX2PixelX(j)+ sox,
-                                             CellaY2PixelY(i) + soy);
-
-                                          break;
-                                      }
-                                      */
-
+                     
                             case CellaTipus.Lang:
                                 {
                                     string ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x1f525));
@@ -224,7 +251,14 @@ namespace cliens
                         }
                 foreach (Jatekos j in JatekosLista.Values.ToArray())
                 {
-                    string ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x1F603));
+                    string ss;
+
+                    if(j.Ele)                        
+                        ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x1F410));//1F410,
+
+                    else
+                        ss = Encoding.UTF32.GetString(BitConverter.GetBytes(0x271D));
+
 
                     Font f = new Font("Segoe UI Symbol", cell_size * 0.6f, FontStyle.Bold);
 

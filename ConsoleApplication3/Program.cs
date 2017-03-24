@@ -138,6 +138,9 @@ namespace ConsoleApplication3
             if (!Jatekosok.TryGetValue(jatekos_ID, out j))
                 return;
 
+            if (j.Actbombaszam >= j.Maxbombaszam)
+                return;
+
             if (bomba_x >= palya_szelesseg || bomba_y >= palya_magassag)
                 return;
 
@@ -159,6 +162,8 @@ namespace ConsoleApplication3
 
             Palya[bomba_x, bomba_y].Tipus = CellaTipus.Bomba;
             Palya[bomba_x, bomba_y].Bomba_ID = b.ID;
+
+            j.Actbombaszam++;
         }
 
         static void bomba_check()
@@ -175,6 +180,18 @@ namespace ConsoleApplication3
                 return;
 
             Bombak.Remove(b.ID);
+
+
+            Jatekos j;
+            if (Jatekosok.TryGetValue(b.Jatekos_ID, out j))
+            {
+                if (j.Actbombaszam <= 0)
+                    j.Actbombaszam = 0;
+
+                else
+                    j.Actbombaszam--;
+            }
+
 
             Palya[b.x, b.y].Tipus = CellaTipus.Ures;
             lang_telepit(b.x, b.y, b);
@@ -204,6 +221,11 @@ namespace ConsoleApplication3
         {
             if (lang_x >= palya_szelesseg || lang_y >= palya_magassag)
                 return false;
+
+            foreach( Jatekos j in Jatekosok.Values)
+                if (j.x == lang_x && j.y == lang_y)
+                    j.Ele = false;
+/*TOOD:Meghal üzenet*/
 
             switch (Palya[lang_x, lang_y].Tipus)
             {
@@ -340,16 +362,44 @@ namespace ConsoleApplication3
             }
         }
 
+        static Thread info;
+
+        static void info_szal()
+        {
+            UdpClient c = new UdpClient();
+            c.EnableBroadcast = true;
+
+            IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, 60001);
+            while (true)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    bw.Write(szerverneve);
+                    UInt16 tmp = (UInt16)((szerverjatekben) ? (1) : (0));
+                         bw.Write(tmp);
+                    tmp = (UInt16) Jatekosok.Count;
+                    bw.Write(tmp);
+                    c.Send(ms.ToArray(), (int)ms.Length, ep);
+                }
+                Thread.Sleep(500);
+            }
+        }
+       static bool szerverjatekben = false;
+        static string szerverneve = "";
+
         static void Main(string[] args)
         {
+            szerverneve = Console.ReadLine();
+            info = new Thread(new ThreadStart(info_szal));
+            info.Start();
 
             TcpListener tl = new TcpListener(60000);
             tl.Start();//halgatozás inditása
 
+
             palya_init(35, 35);
             // jatekos_pozicio_generalas
-
-
 
             while (true)//csatlakozos cikls
             {
@@ -375,6 +425,9 @@ namespace ConsoleApplication3
                     if (Console.ReadKey().KeyChar == 's')
                         break;
             }
+
+            szerverjatekben = true;
+
 
             jatekos_pozicio_generalas();
 
@@ -466,35 +519,58 @@ namespace ConsoleApplication3
                                     case Jatekos_Uzi_Tipusok.Lep_Fel:
                                         if (!Bemutatkozott)
                                             break;
+
+                                        if (!j.Ele)
+                                            break;
+
+
                                         if (jatekos_lep(j.x, j.y - 1, j))
                                             j.y -= 1;
 
                                         break;
+
                                     case Jatekos_Uzi_Tipusok.Lep_Jobbra:
                                         if (!Bemutatkozott)
                                             break;
+                                        if (!j.Ele)
+                                            break;
+
                                         if (jatekos_lep(j.x, j.y - 1, j))
                                             j.x += 1;
                                         break;
+
+
                                     case Jatekos_Uzi_Tipusok.Lep_Le:
                                         if (!Bemutatkozott)
+                                            break;
+
+                                        if (!j.Ele)
                                             break;
 
                                         if (jatekos_lep(j.x, j.y - 1, j))
                                             j.y += 1;
                                         break;
+
+
                                     case Jatekos_Uzi_Tipusok.Lep_Balra:
                                         if (!Bemutatkozott)
                                             break;
-
+                                        if (!j.Ele)
+                                            break;
                                         if (jatekos_lep(j.x, j.y - 1, j))
                                             j.x -= 1;
                                         break;
                                     case Jatekos_Uzi_Tipusok.Bombat_rak:
                                         if (!Bemutatkozott)
                                             break;
+
+                                        if (!j.Ele)
+                                            break;
+
                                         bomba_telepites(j.ID, j.x, j.y);
                                         break;
+
+
                                     case Jatekos_Uzi_Tipusok.Chat:
                                         String uzike = br.ReadString();
                                         String s = String.Format("{0}({1}):{2}", j.Nev, j.ID, uzike);
@@ -519,6 +595,7 @@ namespace ConsoleApplication3
                             {
                                 bw.Write(jj.ID);
                                 bw.Write(jj.Nev);
+                                bw.Write(jj.Ele);
                                 bw.Write(jj.Szin.R);
                                 bw.Write(jj.Szin.G);
                                 bw.Write(jj.Szin.B);

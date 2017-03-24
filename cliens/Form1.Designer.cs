@@ -33,8 +33,8 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.jatekTer1 = new cliens.jatekTer();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -88,15 +88,10 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_keyDown);
             // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 25;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // jatekTer1
             // 
-            this.jatekTer1.BackColor = System.Drawing.Color.GreenYellow;
+            this.jatekTer1.BackColor = System.Drawing.Color.OliveDrab;
+            this.jatekTer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.jatekTer1.Location = new System.Drawing.Point(3, 3);
             this.jatekTer1.Name = "jatekTer1";
             this.jatekTer1.Size = new System.Drawing.Size(967, 524);
@@ -104,6 +99,12 @@
             this.jatekTer1.Text = "jatekTer1";
             this.jatekTer1.Click += new System.EventHandler(this.panel1_Click);
             this.jatekTer1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.panel1_PreviewKeyDown);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 25;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 

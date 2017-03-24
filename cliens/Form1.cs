@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace cliens
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           jatekTer1.palya_init(10, 20);
+         
             Thread t = new Thread(new ThreadStart(fogadoszal));
             t.Start();
         }
@@ -42,19 +43,23 @@ namespace cliens
 
         }
 
+
+        public IPAddress SzerverIPCime { get; set; }
+        public String JatekosNev { get; set; }
+
         BinaryWriter bw;
 
         private void fogadoszal()
         {
-            tcpc = new TcpClient();
-           // tcpc.Connect("10.0.1.166", 60000);
-            tcpc.Connect("10.7.51.141", 60000);
+            tcpc = new TcpClient();          
+            tcpc.Connect(SzerverIPCime, 60000);
+
 
             bw = new BinaryWriter(tcpc.GetStream());
 
 
             bw.Write((byte)Jatekos_Uzi_Tipusok.Bemutatkozik);
-            bw.Write("Marcell");
+            bw.Write(JatekosNev);
             bw.Write((byte)0);
             bw.Write((byte)0);
             bw.Write((byte)153);
@@ -67,7 +72,7 @@ namespace cliens
                 while (true)
                 {
 
-                    if (tcpc.GetStream().DataAvailable)
+                   if (tcpc.GetStream().DataAvailable)
                     {
                         int uzi_tipus = br.ReadByte();
                         switch ((Server_Uzi_Tipusok)uzi_tipus)
@@ -86,6 +91,7 @@ namespace cliens
                                         j = new Jatekos();
 
                                     j.Nev = br.ReadString(); // Nev
+                                    j.Ele= br.ReadBoolean();//Ele
 
                                     byte r = br.ReadByte(); // R
                                     byte g = br.ReadByte(); // G
@@ -143,37 +149,32 @@ namespace cliens
             {
                 case Keys.A:
                     {
-                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Balra);
-                        bw.Write(textBox1.Text);
+                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Balra);                       
                         bw.Flush();
                         break;
                     }
                 case Keys.S:
                     {
-                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Le);
-                        bw.Write(textBox1.Text);
+                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Le);                      
                         bw.Flush();
                         break;
                     }
                 case Keys.D:
                     {
-                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Jobbra);
-                        bw.Write(textBox1.Text);
+                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Jobbra);                       
                         bw.Flush();
                         break;
                     }
                 case Keys.W:
                     {
 
-                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Fel);
-                        bw.Write(textBox1.Text);
+                        bw.Write((byte)Jatekos_Uzi_Tipusok.Lep_Fel);                       
                         bw.Flush();
                         break;
                     }
                 case Keys.Space:
                     {
-                        bw.Write((byte)Jatekos_Uzi_Tipusok.Bombat_rak);
-                        bw.Write(textBox1.Text);
+                        bw.Write((byte)Jatekos_Uzi_Tipusok.Bombat_rak);                      
                         bw.Flush();
                         break;
                     }
